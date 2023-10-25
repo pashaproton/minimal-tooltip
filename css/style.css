@@ -1,0 +1,58 @@
+:root {
+  --tooltip-color: #fafaff;
+  --tooltip-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --tooltip-background: #000000FF;
+  --tooltip-arrow-size: 5px;
+}
+
+.tooltip {
+  color: var(--tooltip-color);
+  opacity: 0;
+  padding: 0.2rem 0.5rem;
+  z-index: 99999;
+  position: fixed;
+  background: var(--tooltip-background);
+  box-shadow: var(--tooltip-shadow);
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 0.2rem;
+  pointer-events: none;
+}
+
+.tooltip:after {
+  border: solid transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0);
+  border-width: var(--tooltip-arrow-size);
+}
+
+.tooltip.top:after {
+  top: 100%;
+  left: 50%;
+  margin-left: calc(var(--tooltip-arrow-size) * -1);
+  border-top-color: var(--tooltip-background);
+}
+
+.tooltip.right:after {
+  top: 50%;
+  right: 100%;
+  margin-top: calc(var(--tooltip-arrow-size) * -1);
+  border-right-color: var(--tooltip-background);
+}
+
+.tooltip.bottom:after {
+  left: 50%;
+  bottom: 100%;
+  margin-left: calc(var(--tooltip-arrow-size) * -1);
+  border-bottom-color: var(--tooltip-background);
+}
+
+.tooltip.left:after {
+  top: 50%;
+  left: 100%;
+  margin-top: calc(var(--tooltip-arrow-size) * -1);
+  border-left-color: var(--tooltip-background);
+}
