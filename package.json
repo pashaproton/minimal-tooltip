@@ -1,6 +1,6 @@
 {
   "name": "minimal-tooltip",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimal JavaScript tooltip with no dependencies",
   "main": "index.mjs",
   "scripts": {
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/pashaproton/tooltip-js"
+    "url": "https://github.com/pashaproton/minimal-tooltip"
   },
   "keywords": [
     "tooltip",
