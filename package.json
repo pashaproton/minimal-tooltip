@@ -1,8 +1,8 @@
 {
   "name": "minimal-tooltip",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Minimal JavaScript tooltip with no dependencies",
-  "main": "index.mjs",
+  "main": "src/index.js",
   "scripts": {
     "prebuild": "rm -rf dist",
     "build:css": "npx esbuild css/style.css --bundle --minify --outfile=dist/css/tooltip.min.css",
@@ -12,7 +12,7 @@
   "author": "Pavlo Ivanichenko <pavlo.ivanichenko@front-end.family>",
   "license": "MIT",
   "files": [
-    "index.mjs",
+    "src/index.js",
     "css/style.css"
   ],
   "repository": {
