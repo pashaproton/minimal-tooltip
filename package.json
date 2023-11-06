@@ -1,6 +1,6 @@
 {
   "name": "minimal-tooltip",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Minimal JavaScript tooltip with no dependencies",
   "main": "src/index.js",
   "scripts": {

@@ -1,3 +1,99 @@
+@keyframes show-tooltip-top {
+  0% {
+    opacity: 0;
+    transform: translateY(0.2rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hide-tooltip-top {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(0.2rem);
+  }
+}
+
+@keyframes show-tooltip-right {
+  0% {
+    opacity: 0;
+    transform: translateX(-0.2rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hide-tooltip-right {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-0.2rem);
+  }
+}
+
+@keyframes show-tooltip-bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.2rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hide-tooltip-bottom {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-0.2rem);
+  }
+}
+
+@keyframes show-tooltip-left {
+  0% {
+    opacity: 0;
+    transform: translateX(0.2rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hide-tooltip-left {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(0.2rem);
+  }
+}
+
 :root {
   --tooltip-color: #fafaff;
   --tooltip-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -5,54 +101,91 @@
   --tooltip-arrow-size: 5px;
 }
 
-.tooltip {
+.minimal-tooltip {
   color: var(--tooltip-color);
   opacity: 0;
   padding: 0.2rem 0.5rem;
   z-index: 99999;
-  position: fixed;
+  position: absolute;
   background: var(--tooltip-background);
   box-shadow: var(--tooltip-shadow);
-  transition: opacity 0.3s ease-in-out;
+  animation-fill-mode: backwards;
   border-radius: 0.2rem;
   pointer-events: none;
-}
 
-.tooltip:after {
-  border: solid transparent;
-  content: "";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-  border-color: rgba(0, 0, 0, 0);
-  border-width: var(--tooltip-arrow-size);
-}
+  &.visible {
+    pointer-events: auto;
+    animation-fill-mode: forwards;
+  }
 
-.tooltip.top:after {
-  top: 100%;
-  left: 50%;
-  margin-left: calc(var(--tooltip-arrow-size) * -1);
-  border-top-color: var(--tooltip-background);
-}
+  &:after {
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(0, 0, 0, 0);
+    border-width: var(--tooltip-arrow-size);
+  }
 
-.tooltip.right:after {
-  top: 50%;
-  right: 100%;
-  margin-top: calc(var(--tooltip-arrow-size) * -1);
-  border-right-color: var(--tooltip-background);
-}
+  &.top {
+    animation-name: hide-tooltip-top;
 
-.tooltip.bottom:after {
-  left: 50%;
-  bottom: 100%;
-  margin-left: calc(var(--tooltip-arrow-size) * -1);
-  border-bottom-color: var(--tooltip-background);
-}
+    &.visible {
+      animation-name: show-tooltip-top;
+    }
 
-.tooltip.left:after {
-  top: 50%;
-  left: 100%;
-  margin-top: calc(var(--tooltip-arrow-size) * -1);
-  border-left-color: var(--tooltip-background);
+    &:after {
+      top: 100%;
+      left: 50%;
+      margin-left: calc(var(--tooltip-arrow-size) * -1);
+      border-top-color: var(--tooltip-background);
+    }
+  }
+
+  &.right {
+    animation-name: hide-tooltip-right;
+
+    &.visible {
+      animation-name: show-tooltip-right;
+    }
+
+    &:after {
+      top: 50%;
+      right: 100%;
+      margin-top: calc(var(--tooltip-arrow-size) * -1);
+      border-right-color: var(--tooltip-background);
+    }
+  }
+
+  &.bottom {
+    animation-name: hide-tooltip-bottom;
+
+    &.visible {
+      animation-name: show-tooltip-bottom;
+    }
+
+    &:after {
+      left: 50%;
+      bottom: 100%;
+      margin-left: calc(var(--tooltip-arrow-size) * -1);
+      border-bottom-color: var(--tooltip-background);
+    }
+  }
+
+  &.left {
+    animation-name: hide-tooltip-left;
+
+    &.visible {
+      animation-name: show-tooltip-left;
+    }
+
+    &:after {
+      top: 50%;
+      left: 100%;
+      margin-top: calc(var(--tooltip-arrow-size) * -1);
+      border-left-color: var(--tooltip-background);
+    }
+  }
 }

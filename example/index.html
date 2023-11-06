@@ -5,34 +5,57 @@
   <meta charset="UTF-8">
   <title>Tooltip examples</title>
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    main {
+      margin: 0 auto;
+      max-width: 800px;
+      font-family: sans-serif;
+      font-size: 1.2rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin: 2rem 0 1rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 1rem 0 0.5rem;
+    }
+
+    p {
+      margin: 0 0 1rem;
+    }
+
+    span {
+      color: #007bff;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
   <main>
     <section>
       <h1>Basic usage</h1>
-      <p>This is example text with <span data-tooltip="Hover text of the basic tooltip #1">hover</span> element which
-        should display <span
-          data-tooltip='{ "delay": 2000, "content": "Hover text of the basic tooltip #2" }'>tooltip</span>.</p>
+      <p>This is example text with <span data-title="Hover text of the basic tooltip #1">hover</span> element which
+        should display <span data-title="Hover text of the basic tooltip #2" data-delay="2000">tooltip</span> with delay
+        in 2 seconds.</p>
     </section>
     <section>
       <h1>Tooltip placement</h1>
       <h2>Top (default)</h2>
-      <p>Some example text with <span
-          data-tooltip='{ "content": "Hover text of the tooltip placed at the top", "placement": "top" }'>hover</span>
-        element.</p>
+      <p>Some example text with <span data-title="Hover text of the tooltip placed at the top"
+          data-placement="top">hover</span> element.</p>
       <h2>Right</h2>
-      <p>Some example text with <span
-          data-tooltip='{ "content": "Hover text of the tooltip placed on the right", "placement": "right" }'>hover</span>
-        element.</p>
+      <p>Some example text with <span data-title="Hover text of the tooltip placed on the right"
+          data-placement="right">hover</span> element.</p>
       <h2>Bottom</h2>
-      <p>Some example text with <span
-          data-tooltip='{ "content": "Hover text of the tooltip placed on the bottom", "placement": "bottom" }'>hover</span>
-        element.</p>
+      <p>Some example text with <span data-title="Hover text of the tooltip placed on the bottom"
+          data-placement="bottom">hover</span> element.</p>
       <h2>Left</h2>
-      <p>Some example text with <span
-          data-tooltip='{ "content": "Hover text of the tooltip placed on the left", "placement": "left" }'>hover</span>
-        element.</p>
+      <p>Some example text with <span data-title="Hover text of the tooltip placed on the left"
+          data-placement="left">hover</span> element.</p>
     </section>
   </main>
   <script src="../dist/js/tooltip.min.js"></script>
