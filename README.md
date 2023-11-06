@@ -1,31 +1,27 @@
 # Tooltip
 
-## Minimal HTML tooltip with no dependencies
+## Minimal JavaScript tooltip with no dependencies
 
-To use the library just add styles
+To use the library just add styles and JavaScript
 ```
 <link rel="stylesheet" href="...tooltip.min.css">
-```
-
-And JavaScript file
-```
 <script src="...tooltip.min.js"></script>
 ```
 
 Then you can use tooltips
 ```
-<p>Lorem ipsum dolor sit amet, <span data-tooltip="The tooltip content">TEXT WITH TOOLTIP</span>, quis nostrud.</p>
+<p>Lorem ipsum dolor sit amet, <span data-title="The tooltip content">TEXT WITH TOOLTIP</span>, quis nostrud.</p>
 ```
 
 By default tooltip displayed at the top of hovered element, but you can change position by add placement option
 ```
-<a data-tooltip='{ "content": "Tooltip content", "placement": "top | right | bottom | left" }'>Example text</a>
+<a data-title="Tooltip content" data-placement="top | right | bottom | left">Example text</a>
 ```
 
 You also can add delay before tooltip will appear
 
 ```
-<a data-tooltip='{ "content": "Tooltip content", "delay": 3000 }'>Example text</a>
+<a data-title="Tooltip content" data-delay="3000">Example text</a>
 ```
 
 ### Options

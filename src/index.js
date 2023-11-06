@@ -1,169 +1,126 @@
-const parseOptions = o => {
-  let content = "You need to add content to the tooltip by using the data-tooltip attribute";
-  let options = {};
+const DEFAULT_ANIMATION_DURATION = 300;
 
-  try {
-    options = JSON.parse(o);
-    content = options.content || content;
-  } catch (error) {
-    content = o;
+const parseOptions = options => ({
+  delay: options.delay ?? DEFAULT_ANIMATION_DURATION,
+  title: options.title ?? "You need to add a data-title to the element",
+  placement: options.placement ?? "top",
+});
+
+const getRects = (hoverElement, tooltipElement) => ({
+  hoverElementRect: hoverElement.getBoundingClientRect(),
+  tooltipElementRect: tooltipElement.getBoundingClientRect(),
+});
+
+const positionTop = (hoverElement, tooltipElement) => {
+  const { hoverElementRect, tooltipElementRect } = getRects(hoverElement, tooltipElement);
+  const top = hoverElementRect.top - tooltipElementRect.height - 10;
+  const left = hoverElementRect.left - (tooltipElementRect.width / 2 - hoverElementRect.width / 2);
+
+  if (top < 0) {
+    return positionBottom();
   }
+
+  tooltipElement.classList.add("top");
+  tooltipElement.style.top = `${top}px`;
+  tooltipElement.style.left = `${left}px`;
+}
+
+const positionRight = (hoverElement, tooltipElement) => {
+  const { hoverElementRect, tooltipElementRect } = getRects(hoverElement, tooltipElement);
+  const top = hoverElementRect.top - (tooltipElementRect.height / 2 - hoverElementRect.height / 2);
+  const left = hoverElementRect.right + 10;
+
+  if (left + tooltipElementRect.width > window.innerWidth) {
+    return positionLeft();
+  }
+
+  tooltipElement.classList.add("right");
+  tooltipElement.style.top = `${top}px`;
+  tooltipElement.style.left = `${left}px`;
+}
+
+const positionBottom = (hoverElement, tooltipElement) => {
+  const { hoverElementRect, tooltipElementRect } = getRects(hoverElement, tooltipElement);
+  const top = hoverElementRect.bottom + 10;
+  const left = hoverElementRect.left - (tooltipElementRect.width / 2 - hoverElementRect.width / 2);
+
+  if (top + tooltipElementRect.height > window.innerHeight) {
+    return positionLeft();
+  }
+
+  tooltipElement.classList.add("bottom");
+  tooltipElement.style.top = `${top}px`;
+  tooltipElement.style.left = `${left}px`;
+}
+
+const positionLeft = (hoverElement, tooltipElement) => {
+  const { hoverElementRect, tooltipElementRect } = getRects(hoverElement, tooltipElement);
+  const top = hoverElementRect.top - (tooltipElementRect.height / 2 - hoverElementRect.height / 2);
+  const left = hoverElementRect.left - tooltipElementRect.width - 10;
+
+  if (left < 0) {
+    return positionRight();
+  }
+
+  tooltipElement.classList.add("left");
+  tooltipElement.style.top = `${top}px`;
+  tooltipElement.style.left = `${left}px`;
+}
+
+const place = (hoverElement, tooltipElement, placement = "top") => {
+  switch (placement) {
+    case "left":
+      return positionLeft(hoverElement, tooltipElement);
+    case "right":
+      return positionRight(hoverElement, tooltipElement);
+    case "bottom":
+      return positionBottom(hoverElement, tooltipElement);
+    case "top":
+    default:
+      return positionTop(hoverElement, tooltipElement);
+  }
+}
+
+const isTouchDevice = () => 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+
+const addTooltipToElement = element => {
+  const options = parseOptions(element.dataset);
+
+  const tooltip = document.createElement("div");
+  tooltip.classList.add("minimal-tooltip", options.placement);
+  tooltip.innerText = options.title;
+  tooltip.style.transitionDelay = `${options.delay}ms`;
+  document.body.appendChild(tooltip);
+
+  place(element, tooltip, options.placement);
 
   return {
-    delay: options.delay || 300,
-    content,
-    placement: options.placement || "top",
-  }
+    tooltip,
+    options,
+  };
 };
 
-class TooltipElement {
-  #options;
-
-  #hoverElementRect;
-
-  #tooltipElement;
-  #tooltipElementRect;
-
-  constructor(hoverElement) {
-    this.#options = parseOptions(hoverElement.dataset.tooltip);
-    this.#hoverElementRect = hoverElement.getBoundingClientRect();
-
-    const tooltip = document.createElement("div");
-    tooltip.classList.add("tooltip");
-    document.body.appendChild(tooltip);
-
-    this.#tooltipElement = tooltip;
-    this.#tooltipElement.innerHTML = this.#options.content;
-    this.#tooltipElementRect = tooltip.getBoundingClientRect();
-    this.#place();
+document.addEventListener("DOMContentLoaded", () => {
+  if (isTouchDevice()) {
+    return;
   }
 
-  #positionTop() {
-    const top = this.#hoverElementRect.top - this.#tooltipElementRect.height - 10;
-    const left = this.#hoverElementRect.left - (this.#tooltipElementRect.width / 2 - this.#hoverElementRect.width / 2);
+  const elementsWithTooltips = document.querySelectorAll("*[data-title]");
 
-    if (top < 0) {
-      return this.#positionBottom();
-    }
+  elementsWithTooltips.forEach((element) => {
+    element.style.position = "relative";
+    const { tooltip, options } = addTooltipToElement(element);
 
-    this.#tooltipElement.classList.add("top");
-    this.#tooltipElement.style.top = `${top}px`;
-    this.#tooltipElement.style.left = `${left}px`;
-  }
-
-  #positionRight() {
-    const top = this.#hoverElementRect.top - (this.#tooltipElementRect.height / 2 - this.#hoverElementRect.height / 2);
-    const left = this.#hoverElementRect.right + 10;
-
-    if (left + this.#tooltipElementRect.width > window.innerWidth) {
-      return this.#positionLeft();
-    }
-
-    this.#tooltipElement.classList.add("right");
-    this.#tooltipElement.style.top = `${top}px`;
-    this.#tooltipElement.style.left = `${left}px`;
-  }
-
-  #positionBottom() {
-    const top = this.#hoverElementRect.bottom + 10;
-    const left = this.#hoverElementRect.left - (this.#tooltipElementRect.width / 2 - this.#hoverElementRect.width / 2);
-
-    if (top + this.#tooltipElementRect.height > window.innerHeight) {
-      return this.#positionLeft();
-    }
-
-    this.#tooltipElement.classList.add("bottom");
-    this.#tooltipElement.style.top = `${top}px`;
-    this.#tooltipElement.style.left = `${left}px`;
-  }
-
-  #positionLeft() {
-    const top = this.#hoverElementRect.top - (this.#tooltipElementRect.height / 2 - this.#hoverElementRect.height / 2);
-    const left = this.#hoverElementRect.left - this.#tooltipElementRect.width - 10;
-
-    if (left < 0) {
-      return this.#positionRight();
-    }
-
-    this.#tooltipElement.classList.add("left");
-    this.#tooltipElement.style.top = `${top}px`;
-    this.#tooltipElement.style.left = `${left}px`;
-  }
-
-  #place() {
-    switch (this.#options.placement) {
-      case "left":
-        return this.#positionLeft();
-      case "right":
-        return this.#positionRight();
-      case "bottom":
-        return this.#positionBottom();
-      case "top":
-      default:
-        return this.#positionTop();
-    }
-  }
-
-  get delay() {
-    return this.#options.delay;
-  }
-
-  show() {
-    this.#tooltipElement.style.opacity = 1;
-  }
-
-  hide() {
-    this.#tooltipElement.style.opacity = 0;
-  }
-
-  remove() {
-    this.#tooltipElement.remove();
-  }
-}
-
-class Queue {
-  constructor() {
-    this._elements = [];
-  }
-
-  add(hoverElement) {
-    const tooltip = new TooltipElement(hoverElement);
-
-    this._elements.push({
-      timeoutId: window.setTimeout(() => {
-        tooltip.show();
-      }, tooltip.delay),
-      tooltip,
+    element.addEventListener("mouseenter", () => {
+      tooltip.classList.add("visible");
+      tooltip.style.animationDelay = `${options.delay}ms`;
+      tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
     });
-  }
 
-  remove() {
-    const lastItem = this._elements.pop();
-
-    lastItem.tooltip.hide();
-    window.setTimeout(() => {
-      window.clearTimeout(lastItem.timeoutId);
-      lastItem.tooltip.remove();
-    }, 300);
-  }
-}
-
-class Tooltip {
-  constructor(tooltipOptions = {}) {
-    const elementsWithTooltips = document.querySelectorAll(tooltipOptions.selector || "*[data-tooltip]");
-
-    this.queue = new Queue();
-
-    elementsWithTooltips.forEach((element) => {
-      element.addEventListener("mouseenter", (event) => {
-        this.queue.add(event.target);
-      });
-
-      element.addEventListener("mouseleave", () => {
-        this.queue.remove();
-      });
+    element.addEventListener("mouseleave", () => {
+      tooltip.classList.remove("visible");
+      tooltip.style.animationDelay = `${DEFAULT_ANIMATION_DURATION}ms`;
+      tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
     });
-  }
-}
-
-new Tooltip();
+  });
+});
