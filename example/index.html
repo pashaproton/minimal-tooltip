@@ -57,8 +57,20 @@
       <p>Some example text with <span data-title="Hover text of the tooltip placed on the left"
           data-placement="left">hover</span> element.</p>
     </section>
+    <section>
+      <h1>Tooltip added to async created element</h1>
+    </section>
   </main>
   <script src="../dist/js/tooltip.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      window.setTimeout(() => {
+        const element = document.createElement("div");
+        element.innerHTML = 'Here should be <span data-title="Hover text of the tooltip added to async created element">tooltip</span>';
+        document.querySelector('section:last-of-type').appendChild(element);
+      }, 1000);
+    });
+  </script>
 </body>
 
 </html>
