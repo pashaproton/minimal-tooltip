@@ -1,9 +1,17 @@
+const DEFAULT_TOOLTIP_SELECTOR = "data-title";
 const DEFAULT_ANIMATION_DURATION = 300;
+
+const tooltipPlacement = {
+  TOP: "top",
+  RIGHT: "right",
+  BOTTOM: "bottom",
+  LEFT: "left",
+};
 
 const parseOptions = options => ({
   delay: options.delay ?? DEFAULT_ANIMATION_DURATION,
-  title: options.title ?? "You need to add a data-title to the element",
-  placement: options.placement ?? "top",
+  title: options.title ?? `You need to add a ${DEFAULT_TOOLTIP_SELECTOR} to the element`,
+  placement: options.placement ?? tooltipPlacement.TOP,
 });
 
 const getRects = (hoverElement, tooltipElement) => ({
@@ -20,7 +28,7 @@ const positionTop = (hoverElement, tooltipElement) => {
     return positionBottom();
   }
 
-  tooltipElement.classList.add("top");
+  tooltipElement.classList.add(tooltipPlacement.TOP);
   tooltipElement.style.top = `${top}px`;
   tooltipElement.style.left = `${left}px`;
 }
@@ -34,7 +42,7 @@ const positionRight = (hoverElement, tooltipElement) => {
     return positionLeft();
   }
 
-  tooltipElement.classList.add("right");
+  tooltipElement.classList.add(tooltipPlacement.RIGHT);
   tooltipElement.style.top = `${top}px`;
   tooltipElement.style.left = `${left}px`;
 }
@@ -48,7 +56,7 @@ const positionBottom = (hoverElement, tooltipElement) => {
     return positionLeft();
   }
 
-  tooltipElement.classList.add("bottom");
+  tooltipElement.classList.add(tooltipPlacement.BOTTOM);
   tooltipElement.style.top = `${top}px`;
   tooltipElement.style.left = `${left}px`;
 }
@@ -62,20 +70,20 @@ const positionLeft = (hoverElement, tooltipElement) => {
     return positionRight();
   }
 
-  tooltipElement.classList.add("left");
+  tooltipElement.classList.add(tooltipPlacement.LEFT);
   tooltipElement.style.top = `${top}px`;
   tooltipElement.style.left = `${left}px`;
 }
 
-const place = (hoverElement, tooltipElement, placement = "top") => {
+const place = (hoverElement, tooltipElement, placement = tooltipPlacement.TOP) => {
   switch (placement) {
-    case "left":
+    case tooltipPlacement.LEFT:
       return positionLeft(hoverElement, tooltipElement);
-    case "right":
+    case tooltipPlacement.RIGHT:
       return positionRight(hoverElement, tooltipElement);
-    case "bottom":
+    case tooltipPlacement.BOTTOM:
       return positionBottom(hoverElement, tooltipElement);
-    case "top":
+    case tooltipPlacement.TOP:
     default:
       return positionTop(hoverElement, tooltipElement);
   }
@@ -100,27 +108,50 @@ const addTooltipToElement = element => {
   };
 };
 
+const handleMouseEnter = (tooltip, options) => () => {
+  console.log("handleMouseEnter");
+  tooltip.classList.add("visible");
+  tooltip.style.animationDelay = `${options.delay}ms`;
+  tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
+};
+
+const handleMouseLeave = tooltip => () => {
+  tooltip.classList.remove("visible");
+  tooltip.style.animationDelay = `${DEFAULT_ANIMATION_DURATION}ms`;
+  tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
+};
+
+const processTooltip = element => {
+  element.style.position = "relative";
+  const { tooltip, options } = addTooltipToElement(element);
+
+  element.addEventListener("mouseenter", handleMouseEnter(tooltip, options));
+  element.addEventListener("mouseleave", handleMouseLeave(tooltip));
+};
+
+const observer = new MutationObserver(mutations => {
+  for (const mutation of mutations) {
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach(node => {
+        if (node.hasAttribute(`${DEFAULT_TOOLTIP_SELECTOR}`)) {
+          processTooltip(node);
+        }
+
+        node.querySelectorAll(`*[${DEFAULT_TOOLTIP_SELECTOR}]`).forEach(processTooltip);
+      });
+    }
+  }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   if (isTouchDevice()) {
     return;
   }
 
-  const elementsWithTooltips = document.querySelectorAll("*[data-title]");
-
-  elementsWithTooltips.forEach((element) => {
-    element.style.position = "relative";
-    const { tooltip, options } = addTooltipToElement(element);
-
-    element.addEventListener("mouseenter", () => {
-      tooltip.classList.add("visible");
-      tooltip.style.animationDelay = `${options.delay}ms`;
-      tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
-    });
-
-    element.addEventListener("mouseleave", () => {
-      tooltip.classList.remove("visible");
-      tooltip.style.animationDelay = `${DEFAULT_ANIMATION_DURATION}ms`;
-      tooltip.style.animationDuration = `${DEFAULT_ANIMATION_DURATION}ms`;
-    });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
   });
+
+  document.querySelectorAll(`*[${DEFAULT_TOOLTIP_SELECTOR}]`).forEach(processTooltip);
 });
